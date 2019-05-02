@@ -1,4 +1,4 @@
-FROM neo4j:3.5.2
+FROM neo4j:3.5.5
 
 COPY ./docker-entrypoint.sh /
 COPY ./files/graph-algorithms-algo-3.5.4.0.jar \
