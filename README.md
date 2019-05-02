@@ -38,3 +38,9 @@ with the following docker command: -
         informaticsmatters/neo4j:3.5.2
         
 ---
+
+## Neo4j extensions
+
+Download apoc library from https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases
+Download graph algororithms library from https://github.com/neo4j-contrib/neo4j-graph-algorithms/releases
+
