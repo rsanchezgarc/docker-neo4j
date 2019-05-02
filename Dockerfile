@@ -1,8 +1,8 @@
 FROM neo4j:3.5.2
 
 COPY ./docker-entrypoint.sh /
-COPY ./files/graph-algorithms-algo-3.5.0.1.jar \
-     ./files/apoc-3.5.0.1-all.jar \
+COPY ./files/graph-algorithms-algo-3.5.4.0.jar \
+     ./files/apoc-3.5.0.3-all.jar \
      /var/lib/neo4j/plugins/
 
 RUN chmod 755 /docker-entrypoint.sh && \
