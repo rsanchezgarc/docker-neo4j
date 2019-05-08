@@ -6,5 +6,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-fragnet
-    image: informaticsmatters/neo4j:${IMAGE_TAG:-3.5.2}
+    image: informaticsmatters/neo4j:${IMAGE_TAG:latest}
     container_name: neo4j
