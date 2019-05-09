@@ -5,6 +5,5 @@ services:
   graph:
     build:
       context: .
-      dockerfile: Dockerfile-fragnet
-    image: informaticsmatters/neo4j:${IMAGE_TAG:latest}
+    image: informaticsmatters/neo4j:${IMAGE_TAG:-latest}
     container_name: neo4j
