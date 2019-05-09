@@ -140,10 +140,13 @@ if [ -d /metrics ]; then
 fi
 # set the neo4j initial password only if you run the database server
 if [ "${cmd}" == "neo4j" ]; then
+    echo "Evaluating NEO4J_AUTH..."
     if [ "${NEO4J_AUTH:-}" == "none" ]; then
+        echo "...NEO4J_AUTH is none"
         NEO4J_dbms_security_auth__enabled=false
     elif [[ "${NEO4J_AUTH:-}" == neo4j/* ]]; then
         password="${NEO4J_AUTH#neo4j/}"
+        echo "...NEO4J_AUTH password is ${password}"
         if [ "${password}" == "neo4j" ]; then
             echo >&2 "Invalid value for password. It cannot be 'neo4j', which is the default."
             exit 1
@@ -153,6 +156,8 @@ if [ "${cmd}" == "neo4j" ]; then
     elif [ -n "${NEO4J_AUTH:-}" ]; then
         echo >&2 "Invalid value for NEO4J_AUTH: '${NEO4J_AUTH}'"
         exit 1
+    else
+        echo "...NEO4J_AUTH is not defined"
     fi
 fi
 # list env variables with prefix NEO4J_ and create settings from them
