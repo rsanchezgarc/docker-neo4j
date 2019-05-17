@@ -36,12 +36,31 @@ with the following docker command: -
         -e IMPORT_TO=graph \
         -e EXTENSION_SCRIPT=/data-import/load-neo4j.sh \
         informaticsmatters/neo4j:3.5.2
-        
+
+## Running post-DB cypher commands
+The image contains the ability to run a series of cypher commands
+after the database has started. It achieves this by running a a provided
+`cypher-runner.sh` script located in this image's `/cypher-runner` directory.
+This script is executed towards the end of the `docker-entrypoint.sh`
+and runs in the background until the provided cypher commands have been
+executed.
+
+All you need to do to run your one early cypher commands
+is provide them in the file `/cypher-runner/cypher.script` and provide
+the neo4j credentials.
+
+An example script may contain the following index and cache-warm-up commands: -
+
+    CREATE INDEX ON :F2(smiles);
+    CREATE INDEX ON :VENDOR(cmpd_id);
+    CALL apoc.warmup.run(true, true, true);
+    
+If this script exists as `/cypher-runner/cypher.script`, and the environment
+variables `NEO4J_USERNAME` and `NEO4J_PASSWORD` are defined, the script
+will be run in the background automatically.
+
+>   The cypher runner waits for a short period of time after neo4j has been
+    given an opportunity to start (about 20 seconds) before the first run of
+    the script is attempted.
+
 ---
-
-## Neo4j extensions
-
-Download apoc library from https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases
-
-Download graph algororithms library from https://github.com/neo4j-contrib/neo4j-graph-algorithms/releases
-

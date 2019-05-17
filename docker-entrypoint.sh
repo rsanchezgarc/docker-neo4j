@@ -191,6 +191,8 @@ if [[ "$(id -u)" = "0" ]]; then
   chown -R "${userid}":"${groupid}" ${NEO4J_dbms_directories_data}
   rm -f ${NEO4J_dbms_directories_logs}/* | true
 fi
+# Run our background cypher-runner...
+/cypher-runner/cypher-runner.sh &
 # Use su-exec to drop privileges to neo4j user
 # Note that su-exec, despite its name, does not replicate the
 # functionality of exec, so we need to use both
