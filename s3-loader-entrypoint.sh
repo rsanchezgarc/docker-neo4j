@@ -12,6 +12,14 @@
 # POST_SLEEP_S  A value (seconds) to sleep at the end of the script.
 #               this allows the user to inspect the environment prior
 #               to the execution moving to the graph container.
+#
+# After downloading the source files the loader expects:
+#
+# - A 'load-neo4j.sh' script in /data/${SYNC_PATH}
+# - The loader script must refer to at least one file
+# - All files referred to must exist
+#
+# If these conditions aren't met the loader halts (does not exit).
 
 : "${AWS_ACCESS_KEY_ID?Need to set AWS_ACCESS_KEY_ID}"
 : "${AWS_SECRET_ACCESS_KEY?Need to set AWS_SECRET_ACCESS_KEY}"
@@ -97,6 +105,53 @@ else
   echo "Skipping download - database appears to exist"
 
 fi
+
+# Are all the files present?
+#
+# To protect against 'broken' deployment or failed downloads
+# We check that the loader script is present, and extract the list of nodes
+# and relationships it refers to to 'load-files.txt'.
+# We then iterate 'load-files.txt' and if any file is not
+# present we stop.
+#
+# Is the loader script present?
+pushd "/data/${SYNC_PATH}"
+LOAD_SCRIPT=load-neo4j.sh
+if [ ! -f "${LOAD_SCRIPT}" ]; then
+  echo ":ERROR: '${LOAD_SCRIPT}' is missing"
+  echo ":HALT:"
+  sleep infinity
+fi
+# Dissect the script - pulling out the node and relationship files...
+grep '\-\-nodes' "${LOAD_SCRIPT}" | cut -d\" -f2 | cut -d\, -f1 > load-files.txt
+grep '\-\-nodes' "${LOAD_SCRIPT}" | cut -d\" -f2 | cut -d\, -f2 >> load-files.txt
+grep '\-\-relationships' "${LOAD_SCRIPT}" | cut -d\" -f2 | cut -d\, -f1 >> load-files.txt
+grep '\-\-relationships' "${LOAD_SCRIPT}" | cut -d\" -f2 | cut -d\, -f2 >> load-files.txt
+# Now check the files, counting each one that cannot be found.
+# We must have at least one file in the list.
+FILES=0
+MISSING_FILES=0
+while read line; do
+  FILES=$(($FILES + 1))
+  if [ ! -f "${line}" ]; then
+    echo "File '${line}' is missing!"
+    MISSING_FILES=$(($MISSING_FILES + 1))
+  fi
+done <<< $(cat load-files.txt)
+echo "FILES=${FILES}"
+echo "MISSING_FILES=${MISSING_FILES}"
+# If any files are missing then stop...
+if [ "${FILES}" == "0" ]; then
+  echo ":ERROR: There were no files"
+  echo ":HALT:"
+  sleep infinity
+fi
+if [ "${MISSING_FILES}" != "0" ]; then
+  echo "ERROR: Some files were missing"
+  echo ":HALT:"
+  sleep infinity
+fi
+popd
 
 # If there's 'once' or 'always' content then place it
 # in the expected location for the corresponding cypher scripts.
