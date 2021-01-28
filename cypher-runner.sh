@@ -29,12 +29,15 @@ CYPHER_PATH="$CYPHER_ROOT/cypher-script"
 ONCE_SCRIPT="$CYPHER_PATH/cypher-script.once"
 ALWAYS_SCRIPT="$CYPHER_PATH/cypher-script.always"
 
-# Files created (touched) when the 'first' script is run
-# and when the 'always' script is run. These files are created
+# Files created (touched) when the 'once' script is run and completed
+# and when the 'always' script is run and complete. These files are created
 # even if there are no associated scripts. The 'always' file
-# is erased each time we're executed and re-created after it's re-executed.
+# is erased each time the container starts and re-created after the script has
+# finished.
 ONCE_EXECUTED_FILE="$CYPHER_PATH/once.executed"
+ONCE_STARTED_FILE="$CYPHER_PATH/once.started"
 ALWAYS_EXECUTED_FILE="$CYPHER_PATH/always.executed"
+ALWAYS_STARTED_FILE="$CYPHER_PATH/always.started"
 
 # Always remove the ALWAYS_EXECUTED_FILE.
 # We re-create this when we've run the always script
@@ -129,9 +132,10 @@ if [[ ! -f "$ONCE_EXECUTED_FILE" && -f "$ONCE_SCRIPT" ]]; then
     echo "[SCRIPT BEGIN]"
     cat "$ONCE_SCRIPT"
     echo "[SCRIPT END]"
+    touch "$ONCE_STARTED_FILE"
     until /var/lib/neo4j/bin/cypher-shell -u neo4j -p "$GRAPH_PASSWORD" < "$ONCE_SCRIPT"
     do
-        echo "($ME) $(date) No joy, waiting..."
+        echo "($ME) $(date) No joy with .once, waiting and trying again..."
         sleep "$ACTION_SLEEP_TIME"
     done
     echo "($ME) $(date) .once script executed."
@@ -147,9 +151,10 @@ if [ -f "$ALWAYS_SCRIPT" ]; then
     echo "[SCRIPT BEGIN]"
     cat "$ALWAYS_SCRIPT"
     echo "[SCRIPT END]"
+    touch "$ALWAYS_STARTED_FILE"
     until /var/lib/neo4j/bin/cypher-shell -u neo4j -p "$GRAPH_PASSWORD" < "$ALWAYS_SCRIPT"
     do
-        echo "($ME) $(date) No joy, waiting..."
+        echo "($ME) $(date) No joy with .always, waiting and trying again..."
         sleep "$ACTION_SLEEP_TIME"
     done
     echo "($ME) $(date) .always script executed."
