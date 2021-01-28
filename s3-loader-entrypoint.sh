@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # We need some key environment variables
 # before we do anything sensible...
