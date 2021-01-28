@@ -115,8 +115,9 @@ fi
 # present we stop.
 #
 # Is the loader script present?
-pushd "/data/${SYNC_PATH}"
 LOAD_SCRIPT=load-neo4j.sh
+echo "Sanity check (${LOAD_SCRIPT})..."
+pushd "/data/${SYNC_PATH}"
 if [ ! -f "${LOAD_SCRIPT}" ]; then
   echo ":ERROR: '${LOAD_SCRIPT}' is missing"
   echo ":HALT:"
@@ -138,8 +139,8 @@ while read line; do
     MISSING_FILES=$(($MISSING_FILES + 1))
   fi
 done <<< $(cat load-files.txt)
-echo "FILES=${FILES}"
-echo "MISSING_FILES=${MISSING_FILES}"
+echo "${LOAD_SCRIPT} FILES=${FILES}"
+echo "${LOAD_SCRIPT} MISSING_FILES=${MISSING_FILES}"
 # If any files are missing then stop...
 if [ "${FILES}" == "0" ]; then
   echo ":ERROR: There were no files"
