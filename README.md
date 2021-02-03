@@ -30,17 +30,17 @@ with the following docker command: -
         -v $HOME/neo4j-container-graph:/graph \
         -p 7474:7474 \
         -p 7687:7687 \
-        -e NEO4J_AUTH=neo4j/blob1234 \
+        -e GRAPH_PASSWORD=blob1234 \
         -e NEO4J_dbms_directories_data=/graph \
         -e NEO4J_dbms_directories_logs=/graph-logs \
         -e IMPORT_DIRECTORY=/data-import \
         -e IMPORT_TO=graph \
         -e EXTENSION_SCRIPT=/data-import/load-neo4j.sh \
-        informaticsmatters/neo4j:3.5.23
+        informaticsmatters/neo4j:3.5.25
 
 ## Running post-DB cypher commands
 The image contains the ability to run a series of cypher commands
-after the database has started. It achieves this by running a a provided
+after the database has started. It achieves this by running the
 `cypher-runner.sh` script located in this image's `/cypher-runner` directory.
 This script is executed towards the end of the `docker-entrypoint.sh`
 and runs in the background until the provided cypher commands have been
