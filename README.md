@@ -4,8 +4,8 @@
 
 A specialised build of neo4j used by a number of InformaticsMatters projects.
 
-The repo contains image definitions for our Graph database and a loader
-that populates the graph from an AWS S3 path.
+The repo contains image definitions for our Graph database, and a loader
+that populates the graph from an S3 bucket and path.
 
 To build and push...
 
@@ -15,7 +15,7 @@ To build and push...
 ## Typical execution (Docker)
 Assuming you have: -
 
-1.  A data directory (i.e. `~/neo4j-import`) with graph files and a pre-start
+1.  A data directory (i.e. `~/neo4j-import`) with graph files, and a pre-start
     batch loader script in it called `load-neo4j.sh`
 1.  A directory for logs (i.e. `~/neo4j-container-logs`)
 1.  A directory to mount for the generated Neo4j database
@@ -46,8 +46,8 @@ This script is executed towards the end of the `docker-entrypoint.sh`
 and runs in the background until the provided cypher commands have been
 executed.
 
-All you need to do to run your one early cypher commands
-is provide them in the either a `/cypher-runner/cypher-script.once`
+All you need to do to run your own cypher commands
+is to provide them in the either a `/cypher-runner/cypher-script.once`
 or `/cypher-runner/cypher-script.always` file and provide
 the neo4j credentials.
 
@@ -63,14 +63,6 @@ An example `.always` script may contain the following cache-warm-up commands: -
 >   This command helps improve query performance by quickly [warming up] the
     page-cache by touching pages in parallel optionally loading
     property-records, dynamic-properties and indexes
-
-If the environment variables `NEO4J_USERNAME` and `NEO4J_PASSWORD` are defined,
-the scripts will be run in the background automatically.
-
->   The cypher runner waits for a short period of time after neo4j has been
-    given an opportunity to start (about 60 seconds) before the first run of
-    the script is attempted. This can be configured in the image (refer
-    to the cypher-runner script for the environment variables it inspects).
 
 ## docker-entrypoint tweaks
 **CAUTION**: We replace the supplied neo4h `docker-entrypoint.sh` script with

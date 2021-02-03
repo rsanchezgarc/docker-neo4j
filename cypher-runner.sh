@@ -7,12 +7,11 @@
 #
 # Expects the following environment variables: -
 #
-#   CYPHER_PRE_ACTION_SLEEP   (default of 60 seconds if not specified)
-#   CYPHER_ACTION_SLEEP       (default of 12 seconds if not specified)
+#   ACTION_SLEEP_TIME           (default of 4 seconds)
 #   CYPHER_ROOT
 #   GRAPH_PASSWORD
-#   NEO4J_dbms_directories_data
-#   NEO4J_dbms_directories_logs
+#   NEO4J_dbms_directories_data (default '/data')
+#   NEO4J_dbms_directories_logs (default '/logs')
 
 ME=cypher-runner.sh
 
@@ -44,23 +43,19 @@ ALWAYS_STARTED_FILE="$CYPHER_PATH/always.started"
 # (which happens every time we start)
 rm -f "$ALWAYS_EXECUTED_FILE" || true
 
-PRE_ACTION_SLEEP_TIME=${CYPHER_PRE_ACTION_SLEEP:-60}
-ACTION_SLEEP_TIME=${CYPHER_ACTION_SLEEP:-12}
+ACTION_SLEEP_TIME=${ACTION_SLEEP_TIME:-4}
+NEO4J_dbms_directories_data=${NEO4J_dbms_directories_data:-/data}
+NEO4J_dbms_directories_logs=${NEO4J_dbms_directories_logs:-/logs}
 
+echo "($ME) $(date) ALWAYS_EXECUTED_FILE=$ALWAYS_EXECUTED_FILE"
+echo "($ME) $(date) ALWAYS_SCRIPT=$ALWAYS_SCRIPT"
+echo "($ME) $(date) ACTION_SLEEP_TIME=$ACTION_SLEEP_TIME"
+echo "($ME) $(date) CYPHER_ROOT=$CYPHER_ROOT"
+echo "($ME) $(date) GRAPH_PASSWORD=$GRAPH_PASSWORD"
 echo "($ME) $(date) NEO4J_dbms_directories_data=$NEO4J_dbms_directories_data"
 echo "($ME) $(date) NEO4J_dbms_directories_logs=$NEO4J_dbms_directories_logs"
-echo "($ME) $(date) GRAPH_PASSWORD=$GRAPH_PASSWORD"
 echo "($ME) $(date) ONCE_SCRIPT=$ONCE_SCRIPT"
-echo "($ME) $(date) ALWAYS_SCRIPT=$ALWAYS_SCRIPT"
 echo "($ME) $(date) ONCE_EXECUTED_FILE=$ONCE_EXECUTED_FILE"
-echo "($ME) $(date) ALWAYS_EXECUTED_FILE=$ALWAYS_EXECUTED_FILE"
-echo "($ME) $(date) PRE_ACTION_SLEEP_TIME=$PRE_ACTION_SLEEP_TIME"
-echo "($ME) $(date) ACTION_SLEEP_TIME=$ACTION_SLEEP_TIME"
-
-# Configurable sleep prior to the first cypher command.
-# Needs to be sufficient to allow the server to start accepting connections.
-echo "($ME) $(date) Pre-action sleep ($PRE_ACTION_SLEEP_TIME seconds)..."
-sleep "$PRE_ACTION_SLEEP_TIME"
 
 # The graph service has not started if there's no debug file.
 DEBUG_FILE="$NEO4J_dbms_directories_logs/debug.log"
@@ -101,11 +96,6 @@ sleep "$ACTION_SLEEP_TIME"
 # i.e. if it looks like this...
 #
 #  'neo4j:SHA-256,C84A[...]:password_change_required'
-#
-# Note: There's a race-condition here. If we do this too early
-#       it's effect is lost - it must be done once we believe
-#       the DB is running. So CYPHER_PRE_NEO4J_SLEEP must be long enough
-#       to ensure the graph is running.
 NEEDS_PASSWORD=$(grep -c password_change_required < "$NEO4J_dbms_directories_data/dbms/auth")
 if [ "$NEEDS_PASSWORD" -eq "1" ]; then
   echo "($ME) $(date) Setting neo4j password..."
@@ -123,7 +113,7 @@ done
 
 # Forced sleep
 echo "($ME) $(date) Post password pause..."
-sleep 4
+sleep "$ACTION_SLEEP_TIME"
 
 # Run the ONCE_SCRIPT
 # (if the ONCE_EXECUTED_FILE is not present)...
