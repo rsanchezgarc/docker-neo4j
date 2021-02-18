@@ -1,9 +1,0 @@
-version: '3.0'
-
-services:
-
-  graph:
-    build:
-      context: .
-    image: informaticsmatters/neo4j:${IMAGE_TAG:-latest}
-    container_name: neo4j
