@@ -14,7 +14,7 @@ RUN mkdir /cypher-script && \
     chmod 755 /cypher-runner/cypher-runner.sh && \
     chmod 755 /*.sh && \
     chmod 744 /cypher-script && \
-    echo 'dbms.security.procedures.unrestricted=algo.*,apoc.*' >> /var/lib/neo4j/conf/neo4j.conf
+    echo 'dbms.security.procedures.unrestricted=algo.*,apoc.*.gds.*' >> /var/lib/neo4j/conf/neo4j.conf
 
 ENV NEO4J_EDITION enterprise
 
