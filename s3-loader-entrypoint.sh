@@ -117,6 +117,9 @@ if [ ! -f "/data/data/dbms/auth" ]; then
       "/data/${SYNC_PATH}/${PATH_OBJECT}"
   done
 
+  echo "Displaying copied objects (in /data/${SYNC_PATH})..."
+  ls -l "/data/${SYNC_PATH}"
+
   # Where will the database appear?
   # Only interested in this if there's a CYPHER_ROOT
   # (i.e. we're dealing with neo4j)
