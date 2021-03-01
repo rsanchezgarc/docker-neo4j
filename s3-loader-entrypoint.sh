@@ -13,10 +13,10 @@
 #                               (like 'raw/vendor/molport/2021-02')
 #       CYPHER_ROOT             is empty ('')
 #       GRAPH_WIPE              is 'yes'
-#       SYNC_PATH               is empty ('')
+#       SYNC_PATH               is a vendor-specific path ('molport')
 #
 #       Importantly: Setting CYPHER_ROOT to '' disables the neo4j-specific
-#                    processing done by this script.
+#                    post-processing done by this script.
 
 # We need some key environment variables
 # before we do anything sensible...
@@ -108,17 +108,12 @@ if [ ! -f "/data/data/dbms/auth" ]; then
   LS_CMD="aws s3 ls s3://${AWS_BUCKET}/${AWS_BUCKET_PATH}/"
   PATH_OBJECTS=$($LS_CMD | tr -s ' ' | cut -d ' ' -f 4)
 
-  # Now copy each object to the local file-system (/data/...).
-  # It's /data plus an optional SYNC_PATH
-  DOWNLOAD_PATH="/data"
-  if [ -n "$SYNC_PATH" ]; then
-    DOWNLOAD_PATH="/data/${SYNC_PATH}"
-  fi
+  # Now copy each object to the local SYNC_PATH
   echo "Copying objects..."
   for PATH_OBJECT in $PATH_OBJECTS; do
     aws s3 cp \
       "s3://${AWS_BUCKET}/${AWS_BUCKET_PATH}/${PATH_OBJECT}" \
-      "${DOWNLOAD_PATH}/${PATH_OBJECT}"
+      "/data/${SYNC_PATH}/${PATH_OBJECT}"
   done
 
   # Where will the database appear?
