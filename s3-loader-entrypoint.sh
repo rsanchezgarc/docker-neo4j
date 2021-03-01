@@ -16,8 +16,8 @@
 #                               (like 'raw/vendor/molport/2021-02')
 #       CYPHER_ROOT             is empty ('')
 #       GRAPH_WIPE              is 'no'
-#       SYNC_PATH               is a data-specific path ('molport')
-#
+#       SYNC_PATH               is a vendor-specific path
+#                               (like 'molport-2021-02')
 
 # We need some key environment variables
 # before we do anything sensible...
