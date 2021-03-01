@@ -4,7 +4,10 @@
 #       as part fo the ChemCentral loader process, where RAW vendor data
 #       is copied into a /data volume.
 #
-#       When used for Squonk's ChemCentral...
+#       Importantly: Setting CYPHER_ROOT to '' disables the neo4j-specific
+#                    post-processing done by this script.
+
+#       When used for Squonk's ChemCentral Database...
 #
 #       AWS_ACCESS_KEY_ID       is set
 #       AWS_SECRET_ACCESS_KEY   is set
@@ -12,11 +15,9 @@
 #       AWS_BUCKET_PATH         is a path to RAW vendor files
 #                               (like 'raw/vendor/molport/2021-02')
 #       CYPHER_ROOT             is empty ('')
-#       GRAPH_WIPE              is 'yes'
-#       SYNC_PATH               is a vendor-specific path ('molport')
+#       GRAPH_WIPE              is 'no'
+#       SYNC_PATH               is a data-specific path ('molport')
 #
-#       Importantly: Setting CYPHER_ROOT to '' disables the neo4j-specific
-#                    post-processing done by this script.
 
 # We need some key environment variables
 # before we do anything sensible...
