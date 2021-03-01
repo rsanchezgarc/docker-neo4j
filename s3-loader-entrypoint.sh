@@ -112,6 +112,7 @@ if [ ! -f "/data/data/dbms/auth" ]; then
   # Now copy each object to the local SYNC_PATH
   echo "Copying objects..."
   for PATH_OBJECT in $PATH_OBJECTS; do
+    echo "+ ${PATH_OBJECT}"
     aws s3 cp \
       "s3://${AWS_BUCKET}/${AWS_BUCKET_PATH}/${PATH_OBJECT}" \
       "/data/${SYNC_PATH}/${PATH_OBJECT}"
