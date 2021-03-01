@@ -91,6 +91,9 @@ if [ ! -f "/data/data/dbms/auth" ]; then
 
   echo "Downloading import data..."
 
+  echo "Making SYNC_PATH directory (/data/${SYNC_PATH})..."
+  mkdir -p "/data/${SYNC_PATH}"
+
   # List the bucket's objects (files).
   # Output is typically: -
   #
@@ -110,9 +113,8 @@ if [ ! -f "/data/data/dbms/auth" ]; then
   PATH_OBJECTS=$($LS_CMD | tr -s ' ' | cut -d ' ' -f 4)
 
   # Now copy each object to the local SYNC_PATH
-  echo "Copying objects..."
+  echo "Copying objects to /data/${SYNC_PATH}..."
   for PATH_OBJECT in $PATH_OBJECTS; do
-    echo "+ ${PATH_OBJECT}"
     aws s3 cp \
       "s3://${AWS_BUCKET}/${AWS_BUCKET_PATH}/${PATH_OBJECT}" \
       "/data/${SYNC_PATH}/${PATH_OBJECT}"
