@@ -74,11 +74,11 @@ else
   echo "CYPHER_ROOT is blank, skipping cypher path directory prep."
 fi
 
-# We only pull down data (causing a potential re-build of the database
-# and indexes) if it looks like there's no graph database.
-# There's likely to be a database if the file '/data/data/dbms/auth' exists -
-# it's created by neo4j. Pulling data when there is a database is pointless.
-if [ ! -f "/data/data/dbms/auth" ]; then
+# We only pull down data if it looks like the sync-path has no loader script.
+# Pulling down data again is time-consuming and we insect the
+# files in the loader script later in this script...
+LOAD_SCRIPT=load-neo4j.sh
+if [ ! -f "/data/${SYNC_PATH}/${LOAD_SCRIPT}" ]; then
 
   # Remove any 'always.executed' file.
   # This will be re-created by the graph container
@@ -135,7 +135,7 @@ if [ ! -f "/data/data/dbms/auth" ]; then
 
 else
 
-  echo "Skipping download - database appears to exist"
+  echo "Skipping download - ${LOAD_SCRIPT} exists"
 
 fi
 
@@ -158,7 +158,6 @@ fi
 # present we stop.
 #
 # Is the loader script present?
-LOAD_SCRIPT=load-neo4j.sh
 echo "Sanity check (${LOAD_SCRIPT})..."
 pushd "/data/${SYNC_PATH}"
 if [ ! -f "${LOAD_SCRIPT}" ]; then
