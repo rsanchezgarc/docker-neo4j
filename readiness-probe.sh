@@ -3,9 +3,10 @@
 # A script for use as a Docker/Kubernetes 'readiness probe'.
 # Used to determine whether the database is 'ready'.
 #
-# We assume the following environment variables exist: -
+# We accommodate the following environment variables: -
 #
 #   CYPHER_ROOT
+#   FORCE_EARLY_READINESS
 #   NEO4J_dbms_directories_logs
 #
 # This code inspects the debug log looking for a line that
@@ -32,6 +33,17 @@ READY=$(grep -c "Database graph.db is ready." < "$DEBUG_FILE")
 if [ "$READY" -eq "0" ]; then
   echo "Not ready - according to debug file ($DEBUG_FILE)"
   exit 1
+fi
+
+# Are we told to become ready immediately
+# (without checking the status of the once or always scripts)?
+#
+# This allows the Pod to become 'ready' even during the initial
+# (typical) one-time indexing stage. We skip checking the once and always
+# files if the environment variable FORCE_EARLY_READINESS has been defined.
+if [ -n "${FORCE_EARLY_READINESS}" ]; then
+  echo "Ready - told to become ready immediately (FORCE_EARLY_READINESS)"
+  exit 0
 fi
 
 # If there's no 'once.executed' we're not 'live'
