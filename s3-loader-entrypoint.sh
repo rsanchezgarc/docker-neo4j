@@ -123,20 +123,20 @@ if [ ! -f "/data/${SYNC_PATH}/${LOAD_SCRIPT}" ]; then
   echo "Displaying copied objects (in /data/${SYNC_PATH})..."
   ls -l "/data/${SYNC_PATH}"
 
-  # Where will the database appear?
-  # Only interested in this if there's a CYPHER_ROOT
-  # (i.e. we're dealing with neo4j)
-  if [ -n "$CYPHER_ROOT" ]; then
-    echo "Making ultimate data directory (/data/data)..."
-    mkdir -p "/data/data"
-  fi
-
   echo "Download complete."
 
 else
 
   echo "Skipping download - ${LOAD_SCRIPT} exists"
 
+fi
+
+# Where will the database appear?
+# Only interested in this if there's a CYPHER_ROOT
+# (i.e. we're dealing with neo4j)
+if [ -n "$CYPHER_ROOT" ]; then
+  echo "Making ultimate data directory (/data/data)..."
+  mkdir -p "/data/data"
 fi
 
 # If we're not dealing with neo4j then we leave now - all we need
