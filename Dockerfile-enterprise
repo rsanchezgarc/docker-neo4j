@@ -1,8 +1,9 @@
-FROM neo4j:4.4.2-enterprise
+FROM neo4j:4.4.9-enterprise
 
 COPY ./docker-entrypoint.sh /
 COPY ./readiness-probe.sh /
 COPY ./files/*.jar /var/lib/neo4j/plugins/
+COPY ./data-import/* /data-import/
 
 # Our cypher-runner.
 # Expected by and employed by our 'load-neo4j' strategy.

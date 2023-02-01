@@ -9,35 +9,32 @@ that populates the graph from an AWS S3 path.
 
 To build and push...
 
-    $ docker-compose build
-    $ docker-compose push
+    $ docker-compose build #Create image from repository
+    $ docker-compose push #Do not push if you are not sure
 
 ## Typical execution (Docker)
-Assuming you have: -
 
-1.  A data directory (i.e. `~/neo4j-import`) with graph files and a pre-start
-    batch loader script in it called `load-neo4j.sh`
-1.  A directory for logs (i.e. `~/neo4j-container-logs`)
-1.  A directory to mount for the generated Neo4j database
-    (i.e. `~/neo4j-container-graph`)
+By default, it will create a tiny fragment network included in the repo, if you want to use one, create a directory
+with the required content (like the one in ./data-import) and add to the docker run the volume (`-v ~/your/local/data/neo4j-import:/data-import \`)
 
 ...then you should be able to start the database
 with the following docker command: -
 
     $ docker run --rm \
-        -v $HOME/neo4j-import:/data-import \
-        -v $HOME/neo4j-container-logs:/graph-logs \
-        -v $HOME/neo4j-container-graph:/graph \
-        -p 7474:7474 \
-        -p 7687:7687 \
-        -e NEO4J_AUTH=neo4j/blob1234 \
-        -e NEO4J_dbms_directories_data=/graph \
-        -e NEO4J_dbms_directories_logs=/graph-logs \
-        -e IMPORT_DIRECTORY=/data-import \
-        -e IMPORT_TO=graph \
-        -e NEO4J_AUTH=neo4j/blob1234 \
-        -e GRAPH_PASSWORD=blob1234 \
-        informaticsmatters/neo4j:4.4.2
+    -v ~/tmp/neo4j-container-logs:/graph-logs \
+    -v ~/tmp/neo4j-container-graph:/graph \
+    -p 7474:7474 \
+    -p 7687:7687 \
+    -e NEO4J_AUTH=neo4j/blob1234 \
+    -e NEO4J_dbms_directories_data=/graph \
+    -e NEO4J_dbms_directories_logs=/graph-logs \
+    -e IMPORT_DIRECTORY=/data-import \
+    -e IMPORT_TO=graph \
+    -e EXTENSION_SCRIPT=/data-import/load-neo4j.sh \
+    -e GRAPH_PASSWORD=blob1234 \
+    -e NEO4J_USERNAME=neo4j \
+    -e NEO4J_dbms_security_procedures_unrestricted=algo\.\* \
+    CONTAINER_ID
 
 ## Running post-DB cypher commands
 The image contains the ability to run a series of cypher commands
