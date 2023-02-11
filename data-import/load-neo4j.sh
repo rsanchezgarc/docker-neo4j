@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 
 ME=load-neo4j.sh
@@ -20,11 +21,14 @@ then
         --nodes "xchem-supplier-nodes.csv.gz" \
         --nodes "xchem-isomol-nodes.csv.gz" \
         --nodes "nodes-header.csv,xchem-augmented-nodes.csv.gz" \
+        --nodes "nodes-header.csv,nodes.csv.gz" \
         --relationships "edges-header.csv,edges.csv.gz" \
         --relationships "xchem-suppliermol-supplier-edges.csv.gz" \
         --relationships "xchem-isomol-suppliermol-edges.csv.gz" \
         --relationships "xchem-molecule-suppliermol-edges.csv.gz" \
-        --relationships "xchem-isomol-molecule-edges.csv.gz" 
+        --relationships "xchem-isomol-molecule-edges.csv.gz" \
+        --skip-bad-relationships \
+        --skip-duplicate-nodes
 #        --ignore-missing-nodes #THIS DOES NOT WORK IN NEWER VERSIONS, check how to replace it
     echo "($ME) $(date) Imported."
 else
