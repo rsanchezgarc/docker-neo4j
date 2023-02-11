@@ -21,6 +21,7 @@ with the required content (like the one in ./data-import) and add to the docker 
 with the following docker command: -
 
     $ docker run --rm \
+    --user $(id -u):$(id -g) \
     -v ~/tmp/neo4j-container-logs:/graph-logs \
     -v ~/tmp/neo4j-container-graph:/graph \
     -p 7474:7474 \
@@ -35,6 +36,8 @@ with the following docker command: -
     -e NEO4J_USERNAME=neo4j \
     -e NEO4J_dbms_security_procedures_unrestricted=algo\.\* \
     CONTAINER_ID
+
+Create the neo4j-container-logs and neo4j-container-graph directories before running to avoid permission issues. Run without the --rm flag to avoid the container being deleted after running.
 
 ## Running post-DB cypher commands
 The image contains the ability to run a series of cypher commands
